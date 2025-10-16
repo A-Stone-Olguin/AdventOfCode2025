@@ -24,7 +24,7 @@ fn request() -> Result<String, Box<dyn Error>> {
         .header("Cookie", cookie)
         .send()?;
 
-    println!("Status: {}", response.text());
+    println!("Status: {}", response.status());
 
     let body = response.text()?;
     Ok(body)
