@@ -6,3 +6,5 @@ edition = "2024"
 [dependencies]
 clap = { version = "4", features = ["derive"] }
 dotenvy = "0.15"
+ndarray = "0.16.1"
+regex = "1"
