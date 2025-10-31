@@ -23,6 +23,9 @@ target
 # No environment
 .env
 
+# No IDE files
+.vscode
+
 
 # Added by cargo
 

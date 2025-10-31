@@ -12,3 +12,17 @@ impl Day for Day1 {
         format!("Unimplemented part2. Input: {}", input)
     }
 }
+
+#[cfg(test)]
+mod day1_tests {
+    use super::*;
+
+    const EXAMPLE_INPUT: &str = "INPUT";
+
+    #[test]
+    fn test_day1_part1() {
+        let day = Day1::default();
+        assert_ne!(day.part1(EXAMPLE_INPUT), "tmp")
+    }
+
+}
