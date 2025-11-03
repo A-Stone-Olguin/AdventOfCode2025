@@ -26,7 +26,8 @@ target
 # No IDE files
 .vscode
 
+# No WAL files
+
 
 # Added by cargo
-
 /target

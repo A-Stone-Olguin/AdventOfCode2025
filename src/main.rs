@@ -1,6 +1,7 @@
 use clap::Parser;
 use std::fs;
 use advent_of_code_2025::days::day_factory::day_factory;
+use advent_of_code_2025::db::sqlite::init_db;
 
 #[derive(Parser)]
 struct Arguments {
@@ -32,5 +33,11 @@ fn main() {
 
     println!("Day {} Part 1 Result: Result: {}", args.day, day.part1(&data));
     println!("Day {} Part 2 Result: Result: {}", args.day, day.part2(&data));
+
+
+    let _conn = match init_db() {
+        Ok(conn) => conn,
+        Err(e) => panic!("Failed to initialize database. Error: {}", e),
+    };
 }
 
