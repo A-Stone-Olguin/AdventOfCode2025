@@ -1,4 +1,4 @@
-use rusqlite::{Connection, Result, Rows, Statement, functions::{Aggregate, FunctionFlags}};
+use rusqlite::{Connection, Result, Statement, functions::{Aggregate, FunctionFlags}};
 use rusqlite_migration::Migrations;
 use include_dir::{include_dir, Dir};
 
@@ -50,6 +50,7 @@ impl Sqlite {
             FROM days d
             LEFT JOIN timings t ON d.id = t.day_id
             GROUP BY t.day_id
+            ORDER BY d.day;
             "#
         )?;
 
@@ -80,12 +81,34 @@ impl<'conn> PreparedStatements<'conn> {
         Ok(())
     }
 
-    pub fn get_timings(&mut self) -> Result<Rows<'_>, rusqlite::Error> {
-        self.select_timings_stmt.query([])
+    pub fn get_timings(&mut self) -> Result<Vec<TimingResult>, rusqlite::Error> {
+        let mut rows = self.select_timings_stmt.query([])?;
+
+        let mut timing_results: Vec<TimingResult> = vec![];
+        while let Some(row) = rows.next()? {
+            let result = TimingResult {
+                day: row.get(0)?,
+                part: row.get(1)?,
+                min_time_ms: row.get(2).unwrap_or_default(),
+                median_time_ms: row.get(3).unwrap_or_default(),
+                max_time_ms: row.get(2).unwrap_or_default(),
+                number_iterations: row.get(5).unwrap_or_default(),
+            };
+            timing_results.push(result);
+        }
+        Ok(timing_results)
     }
 }
 
-struct MedianSqlite {}
+pub struct TimingResult {
+    pub day: u8,
+    pub part: u8,
+    pub min_time_ms: i64,
+    pub median_time_ms: f64,
+    pub max_time_ms: i64,
+    pub number_iterations: i64,
+}
+pub struct MedianSqlite {}
 
 impl Aggregate<Vec<f64>, f64> for MedianSqlite {
     fn init(&self, _ctx: &mut rusqlite::functions::Context<'_>) -> Result<Vec<f64>> {
