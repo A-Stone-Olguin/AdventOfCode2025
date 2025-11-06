@@ -1,4 +1,4 @@
-use rusqlite::{Connection, Result, Rows, Statement};
+use rusqlite::{Connection, Result, Rows, Statement, functions::{Aggregate, FunctionFlags}};
 use rusqlite_migration::Migrations;
 use include_dir::{include_dir, Dir};
 
@@ -12,7 +12,6 @@ pub struct PreparedStatements<'conn> {
 
 pub struct Sqlite {
     conn: Connection,
-    // prepared_statements: PreparedStatements<'conn>
 }
 
 impl Sqlite {
@@ -26,47 +25,38 @@ impl Sqlite {
             Ok(_) => println!("Successfully applied migrations"),
             Err(e) => eprintln!("Failed to apply migrations: {}", e),
         }
-        // TODO: FIX THIS
-        // conn.execute("PRAGMA foreign_keys = ON;", [])?;
-        // conn.execute("PRAGMA journal_mode='wal';", [])?;
+        conn.create_aggregate_function("median", 1, FunctionFlags::SQLITE_DETERMINISTIC, MedianSqlite {})?;
+        conn.pragma_update(None, "foreign_keys", "ON")?;
+        conn.pragma_update(None, "journal_mode", "WAL")?;
         Ok(Self { conn })
     }
 
     pub fn prepare_stmts(&mut self) -> Result<PreparedStatements<'_>> {
-        let delete_timings_stmt = match self.conn.prepare("DELETE FROM timings WHERE day_id = ?;") {
-            Ok(statement) => statement,
-            Err(e) => return Err(e),
-        };
+        let delete_timings_stmt = self.conn.prepare("DELETE FROM timings WHERE day_id = ?;")?;
 
-        let insert_timings_stmt = match self.conn.prepare(
+        let insert_timings_stmt = self.conn.prepare(
             "INSERT INTO timings (day_id, time_ms) VALUES (?1, ?2);"
-        ) {
-            Ok(statment) => statment,
-            Err(e) => return Err(e),
-        };
+        )?;
 
-        let select_timings_stmt = match self.conn.prepare(
+        let select_timings_stmt = self.conn.prepare(
             r#"
             SELECT
                 d.day,
                 d.part,
                 min(t.time_ms),
-                avg(t.time_ms),
+                median(t.time_ms),
                 max(t.time_ms),
                 count(t.id)
             FROM days d
             LEFT JOIN timings t ON d.id = t.day_id
             GROUP BY t.day_id
             "#
-        ) {
-            Ok(statement) => statement,
-            Err(e) => return Err(e),
-        };
+        )?;
 
         Ok(PreparedStatements {
-            insert_timings_stmt: insert_timings_stmt,
-            select_timings_stmt: select_timings_stmt,
-            delete_timings_stmt: delete_timings_stmt,
+            insert_timings_stmt,
+            select_timings_stmt,
+            delete_timings_stmt,
         })
     }
 }
@@ -92,5 +82,39 @@ impl<'conn> PreparedStatements<'conn> {
 
     pub fn get_timings(&mut self) -> Result<Rows<'_>, rusqlite::Error> {
         self.select_timings_stmt.query([])
+    }
+}
+
+struct MedianSqlite {}
+
+impl Aggregate<Vec<f64>, f64> for MedianSqlite {
+    fn init(&self, _ctx: &mut rusqlite::functions::Context<'_>) -> Result<Vec<f64>> {
+        Ok(Vec::new())
+    }
+
+    fn step(&self, ctx: &mut rusqlite::functions::Context<'_>, acc: &mut Vec<f64>) -> Result<()> {
+        if let Ok(Some(value)) = ctx.get::<Option<f64>>(0) {
+            acc.push(value);
+        }
+        Ok(())
+    }
+
+    fn finalize(&self, _ctx: &mut rusqlite::functions::Context<'_>, acc: Option<Vec<f64>>) -> Result<f64> {
+        let mut rows = match acc {
+            Some(rows) => rows,
+            None => return Ok(0.0),
+        };
+
+        if rows.is_empty() {
+            return Ok(0.0)
+        }
+    
+        rows.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        let mid = rows.len() / 2;
+        if rows.len() % 2 == 0 {
+            Ok((rows[mid - 1] + rows[mid]) / 2.0)
+        } else {
+            Ok(rows[mid])
+        }
     }
 }

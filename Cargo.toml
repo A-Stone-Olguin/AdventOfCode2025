@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
-rusqlite = { version = "0.37", features = ["bundled"] }
+rusqlite = { version = "0.37", features = ["bundled", "functions"] }
 rusqlite_migration = { version = "2.3.0", features = ["from-directory"] }
 dotenvy = "0.15"
 ndarray = "0.16.1"
