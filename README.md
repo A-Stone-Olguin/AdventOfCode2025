@@ -16,6 +16,8 @@ Here are some timing data for each day and part.
 <!-- START_TIMINGS_TABLE -->
 | Day | Part | Min Time (ms) | Median Time (ms) | Max Time (ms) | Number Iterations |
 | --- | ---- | ------------- | ---------------- | ------------- | ----------------- |
+| 1 | 1 | 0 | 0 | 0 | 1 |
+| 1 | 2 | 0 | 0 | 0 | 1 |
 | 24 | 1 | 0 | 0 | 0 | 10 |
 | 24 | 2 | 0 | 0 | 0 | 10 |
 | 25 | 2 | 0 | 0 | 0 | 0 |
