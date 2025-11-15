@@ -1,7 +1,7 @@
 use rusqlite::{Connection, Result, functions::FunctionFlags};
 use rusqlite_migration::Migrations;
 use include_dir::{include_dir, Dir};
-use crate::db::timing_result::TimingResult;
+use crate::timings::timing_result::TimingResult;
 use crate::traits::timing_repository::TimingRepository;
 use crate::db::sqlite::median::MedianSqlite;
 

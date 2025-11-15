@@ -1,4 +1,4 @@
-use crate::db::timing_result::TimingResult;
+use crate::timings::timing_result::TimingResult;
 
 pub trait TimingRepository<E> {
     fn insert_timings(&mut self, day_id: i64, timings_ms: &[i64]) -> Result<usize, E>;
