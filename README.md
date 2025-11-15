@@ -1,8 +1,14 @@
 # Advent of Code 2025
 
 ## Setup
-* Install Rust
-* Build
+
+### Install Rust
+This project runs using the [Rust programming language.](https://rust-lang.org/).
+
+Rust provides ways to build for your operating system here: [Install Rust](https://rust-lang.org/tools/install/)
+
+### How to build
+TODO
 
 ##  Timings
 Here are some timing data for each day and part.

@@ -1,17 +1,6 @@
 use crate::traits::day::Day;
 use crate::days::*;
 
-macro_rules! match_days {
-    ($day_number:expr, $( $num:expr => $day:ty ),* ) => {
-        match $day_number {
-            $(
-                $num => Box::new(<$day>::default()),
-            )*
-            _ => panic!("Unknown day: {}", $day_number),
-        }
-    };
-}
-
 pub fn day_factory(day_number: u8) -> Box<dyn Day> {
     match_days!(day_number,
         1 => Day1,
@@ -25,19 +14,6 @@ pub fn day_factory(day_number: u8) -> Box<dyn Day> {
         9 => Day9,
         10 => Day10,
         11 => Day11,
-        12 => Day12,
-        13 => Day13,
-        14 => Day14,
-        15 => Day15,
-        16 => Day16,
-        17 => Day17,
-        18 => Day18,
-        19 => Day19,
-        20 => Day20,
-        21 => Day21,
-        22 => Day22,
-        23 => Day23,
-        24 => Day24,
-        25 => Day25
+        12 => Day12
     )
 }
