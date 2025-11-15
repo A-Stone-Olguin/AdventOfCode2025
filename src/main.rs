@@ -1,11 +1,10 @@
 use advent_of_code_2025::traits::timing_repository::TimingRepository;
 use clap::Parser;
-use std::vec;
-use std::time::SystemTime;
 use advent_of_code_2025::days::day_factory::day_factory;
-use advent_of_code_2025::db::sqlite::sqlite::Sqlite;
+use advent_of_code_2025::db::sqlite::connection::Sqlite;
 use advent_of_code_2025::db::record::write_timings_to_readme;
 use advent_of_code_2025::utils::get_input_data::get_input_data;
+use advent_of_code_2025::db::record_timings::record_timings;
 
 #[derive(Parser)]
 struct Arguments {
@@ -35,27 +34,16 @@ fn main() {
         Err(e) => panic!("Could not start database. Error: {e}"),
     };
 
-    let mut timings_part1: Vec<i64> = vec![];
-    let mut timings_part2: Vec<i64> = vec![];
-    for _ in 0..args.number_iterations {
-        let mut start = SystemTime::now();
-        day.part1(&data);
-        let duration = match start.elapsed() {
-            Ok(elapsed) => elapsed.as_millis() as i64,
-            Err(_) => 0,
-        };
-        timings_part1.push(duration);
+    let timings_part1 = record_timings(args.number_iterations, &data, |input| day.part1(input));
+    let timings_part2 = record_timings(args.number_iterations, &data, |input| day.part2(input));
 
-        start = SystemTime::now();
-        day.part2(&data);
-        let duration = match start.elapsed() {
-            Ok(elapsed) => elapsed.as_millis() as i64,
-            Err(_) => 0,
-        };
-        timings_part2.push(duration);
-    }
     for (i, vector) in [timings_part1, timings_part2].iter().enumerate() {
-        let day_id: u8 = 2*(args.day) + (i+1) as u8;
+        let day_id: u8 = 2*(args.day-1) + i as u8;
+
+        match timing_repository.delete_day_timings(day_id) {
+            Ok(_) => println!("Finished deleting old timing data for Day {} Part {}", args.day, i+1),
+            Err(e) => println!("Failed to insert timing. Error: {}", e),
+        }
         match timing_repository.insert_timings(day_id, vector) {
             Ok(_) => println!("Finished recording timing data for Day {} Part {}\n", args.day, i+1),
             Err(e) => println!("Failed to insert timing. Error: {}", e),

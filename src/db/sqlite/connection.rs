@@ -62,7 +62,7 @@ impl TimingRepository<rusqlite::Error> for Sqlite {
                 max(t.time_ms),
                 count(t.id)
             FROM days d
-            LEFT JOIN timings t ON d.id = t.day_id
+            JOIN timings t ON d.id = t.day_id
             GROUP BY t.day_id
             ORDER BY d.day;
             "#
