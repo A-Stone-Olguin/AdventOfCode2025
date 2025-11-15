@@ -7,14 +7,17 @@ pub fn record_timings<F>(number_iterations: u32, data: &str, timed_function: F) 
 where
     F: Fn(&str) -> String,
 {
-  (0..number_iterations).map(|_| {
+  let mut timings: Vec<i64> = vec![];
+  for _ in 0..number_iterations {
     let start = SystemTime::now();
     timed_function(data);
-    match start.elapsed() {
+    let duration = match start.elapsed() {
         Ok(elapsed) => elapsed.as_millis() as i64,
         Err(_) => 0,
-    }
-  }).collect::<Vec<i64>>()
+    };
+    timings.push(duration);
+  }
+  timings
 }
 
 fn construct_table_string(timings: Vec<TimingResult>) -> Result<String, std::fmt::Error> {

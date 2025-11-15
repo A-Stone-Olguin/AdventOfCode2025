@@ -34,7 +34,7 @@ impl TimingRepository<rusqlite::Error> for Sqlite {
     fn insert_timings(&mut self, day_id: i64, timings_ms: &[i64]) -> rusqlite::Result<usize> {
         let args = match (0..timings_ms.len())
             .map(|i| format!("(?1, ?{})", i+2))
-            .reduce(|acc, e| acc + &e) {
+            .reduce(|acc, e| acc + ", " +  &e) {
                 Some(str) => str,
                 None => return Ok(0),
             };
