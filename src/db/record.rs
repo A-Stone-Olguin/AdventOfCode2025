@@ -1,6 +1,6 @@
 use std::fmt::{Write};
 use std::fs;
-use crate::db::sqlite::TimingResult;
+use crate::db::timing_result::TimingResult;
 
 fn construct_table_string(timings: Vec<TimingResult>) -> Result<String, std::fmt::Error> {
   let mut md_table = String::new();

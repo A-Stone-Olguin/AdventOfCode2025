@@ -1,8 +1,9 @@
+use advent_of_code_2025::traits::timing_repository::TimingRepository;
 use clap::Parser;
 use std::vec;
 use std::time::SystemTime;
 use advent_of_code_2025::days::day_factory::day_factory;
-use advent_of_code_2025::db::sqlite::Sqlite;
+use advent_of_code_2025::db::sqlite::sqlite::Sqlite;
 use advent_of_code_2025::db::record::write_timings_to_readme;
 use advent_of_code_2025::utils::get_input_data::get_input_data;
 
@@ -29,14 +30,9 @@ fn main() {
         return;
     }
 
-    let mut db = match Sqlite::new() {
-        Ok(db) => db,
-        Err(e) => panic!("Failed to initialize database. Error: {}", e),
-    };
-
-    let mut prepared_statements = match db.prepare_stmts() {
-        Ok(stmts) => stmts,
-        Err(e) => panic!("Failed to prepare statements. Error: {}", e),
+    let mut timing_repository: Box<dyn TimingRepository<_>> = match Sqlite::new() {
+        Ok(repo) => Box::new(repo),
+        Err(e) => panic!("Could not start database. Error: {e}"),
     };
 
     let mut timings_part1: Vec<i64> = vec![];
@@ -59,14 +55,15 @@ fn main() {
         timings_part2.push(duration);
     }
     for (i, vector) in [timings_part1, timings_part2].iter().enumerate() {
-        match prepared_statements.insert_timings(args.day, (i+1) as u8, vector) {
+        let day_id: u8 = 2*(args.day) + (i+1) as u8;
+        match timing_repository.insert_timings(day_id, vector) {
             Ok(_) => println!("Finished recording timing data for Day {} Part {}\n", args.day, i+1),
             Err(e) => println!("Failed to insert timing. Error: {}", e),
         }
     }
 
     // Write to README
-    let results = match prepared_statements.get_timings() {
+    let results = match timing_repository.get_timings() {
         Ok(results) => results,
         Err(e) => panic!("Failed to read timings. Error: {}", e),
     };
@@ -75,4 +72,3 @@ fn main() {
         Err(_) => panic!("Failed to write timings to README"),
     }
 }
-
