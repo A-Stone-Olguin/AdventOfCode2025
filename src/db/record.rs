@@ -7,16 +7,16 @@ fn construct_table_string(timings: Vec<TimingResult>) -> Result<String, std::fmt
 
   writeln!(md_table, "| Day | Part | Min Time (ms) | Median Time (ms) | Max Time (ms) | Number Iterations |")?;
   writeln!(md_table, "| --- | ---- | ------------- | ---------------- | ------------- | ----------------- |")?;
-  
+
   for timing in timings {
-      let _ = writeln!(md_table, "| {} | {} | {} | {} | {} | {} |",
+      writeln!(md_table, "| {} | {} | {} | {} | {} | {} |",
           timing.day,
           timing.part,
           timing.min_time_ms,
           timing.median_time_ms,
           timing.max_time_ms,
           timing.number_iterations,
-      );
+      )?;
   }
   Ok(md_table)
 }

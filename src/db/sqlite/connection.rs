@@ -31,22 +31,21 @@ impl Sqlite {
 }
 
 impl TimingRepository<rusqlite::Error> for Sqlite {
-    // TODO: Batch insert
-    fn insert_timings(&mut self, day_id: u8, timings_ms: &[i64]) -> rusqlite::Result<()> {
-        let mut insert_timings_stmt = self.conn.prepare_cached(
-            "INSERT INTO timings (day_id, time_ms) VALUES (?1, ?2);"
-        )?;
+    fn insert_timings(&mut self, day_id: i64, timings_ms: &[i64]) -> rusqlite::Result<usize> {
+        let args = match (0..timings_ms.len())
+            .map(|i| format!("(?1, ?{})", i+2))
+            .reduce(|acc, e| acc + &e) {
+                Some(str) => str,
+                None => return Ok(0),
+            };
 
-        for timing_ms in timings_ms {
-            match insert_timings_stmt.execute(rusqlite::params![day_id, timing_ms]) {
-                Ok(_) => continue,
-                Err(e) => return Err(e),
-            }
-        }
-        Ok(())
+        let sql = format!("INSERT INTO timings (day_id, time_ms) VALUES {args}");
+        let params = std::iter::once(&day_id).chain(timings_ms.iter());
+
+        self.conn.execute(&sql, rusqlite::params_from_iter(params))
     }
 
-    fn delete_day_timings(&mut self, day_id: u8) -> rusqlite::Result<usize> {
+    fn delete_day_timings(&mut self, day_id: i64) -> rusqlite::Result<usize> {
         let mut delete_timings_stmt = self.conn.prepare_cached("DELETE FROM timings WHERE day_id = ?;")?;
         delete_timings_stmt.execute(rusqlite::params![day_id])
     }

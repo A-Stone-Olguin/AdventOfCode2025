@@ -38,7 +38,7 @@ fn main() {
     let timings_part2 = record_timings(args.number_iterations, &data, |input| day.part2(input));
 
     for (i, vector) in [timings_part1, timings_part2].iter().enumerate() {
-        let day_id: u8 = 2*(args.day-1) + i as u8;
+        let day_id: i64 = (2*(args.day-1) + i as u8) as i64;
 
         match timing_repository.delete_day_timings(day_id) {
             Ok(_) => println!("Finished deleting old timing data for Day {} Part {}", args.day, i+1),
