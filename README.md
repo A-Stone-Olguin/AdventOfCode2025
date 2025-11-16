@@ -13,9 +13,12 @@ TODO
 ##  Timings
 Here are some timing data for each day and part.
 
+To have this automatically update the table before commit, add the gitHooks folder as the git commit hooks directory for the repository.
+`git config core.hooksPath gitHooks`
+
 <!-- START_TIMINGS_TABLE -->
 | Day | Part | Min Time (ms) | Median Time (ms) | Max Time (ms) | Number Iterations |
 | --- | ---- | ------------- | ---------------- | ------------- | ----------------- |
-| 1 | 1 | 0 | 0 | 0 | 1 |
-| 1 | 2 | 0 | 0 | 0 | 1 |
+| 1 | 1 | 0 | 0 | 0 | 10 |
+| 1 | 2 | 0 | 0 | 0 | 10 |
 <!-- END_TIMINGS_TABLE -->

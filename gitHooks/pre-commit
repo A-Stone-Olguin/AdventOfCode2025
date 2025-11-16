@@ -1,0 +1,4 @@
+#!/bin/sh
+cargo run 1 -r
+
+git add README.md
