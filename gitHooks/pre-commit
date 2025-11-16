@@ -1,4 +1,14 @@
-#!/bin/sh
-cargo run 1 -r
+#!/bin/bash
+echo "Running pre-commit hook"
 
+
+if [[ -n $(cargo fmt --check) ]]; then
+  echo "Failed formatting"
+  echo "Please run 'cargo fmt' before committing"
+fi
+
+
+cargo run 1 -r
 git add README.md
+
+echo "Finished running pre-commit hook"
