@@ -28,8 +28,10 @@ pub fn matches_per_row(rows: Vec<&str>, regex: &Regex) -> Vec<Vec<String>> {
 
 #[cfg(test)]
 pub mod parse_input_data_test {
+    use crate::utils::parse_input_data::{
+        matches_per_row, parse_input_to_grid, parse_input_to_rows,
+    };
     use regex::Regex;
-    use crate::utils::parse_input_data::{parse_input_to_grid, parse_input_to_rows, matches_per_row};
 
     const EXAMPLE_INPUT: &str = r#"
     1234567890
@@ -40,9 +42,9 @@ pub mod parse_input_data_test {
 
     #[test]
     fn test_parse_input_to_grid() {
-       let array = parse_input_to_grid(EXAMPLE_INPUT);
-       assert_eq!(array[(0,0)], '1'); 
-       assert_eq!(array.shape(), &[4, 10]);
+        let array = parse_input_to_grid(EXAMPLE_INPUT);
+        assert_eq!(array[(0, 0)], '1');
+        assert_eq!(array.shape(), &[4, 10]);
     }
 
     #[test]

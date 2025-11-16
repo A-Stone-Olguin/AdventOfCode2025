@@ -1,5 +1,3 @@
-
-
 use rusqlite::{Result, functions::Aggregate};
 
 pub struct MedianSqlite {}
@@ -16,16 +14,20 @@ impl Aggregate<Vec<f64>, f64> for MedianSqlite {
         Ok(())
     }
 
-    fn finalize(&self, _ctx: &mut rusqlite::functions::Context<'_>, acc: Option<Vec<f64>>) -> Result<f64> {
+    fn finalize(
+        &self,
+        _ctx: &mut rusqlite::functions::Context<'_>,
+        acc: Option<Vec<f64>>,
+    ) -> Result<f64> {
         let mut rows = match acc {
             Some(rows) => rows,
             None => return Ok(0.0),
         };
 
         if rows.is_empty() {
-            return Ok(0.0)
+            return Ok(0.0);
         }
-    
+
         rows.sort_by(|a, b| a.partial_cmp(b).unwrap());
         let mid = rows.len() / 2;
         if rows.len() % 2 == 0 {

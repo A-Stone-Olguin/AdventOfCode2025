@@ -1,5 +1,5 @@
-use crate::traits::day::Day;
 use crate::days::*;
+use crate::traits::day::Day;
 
 pub fn day_factory(day_number: u8) -> Box<dyn Day> {
     match_days!(day_number,

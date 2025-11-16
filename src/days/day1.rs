@@ -24,5 +24,4 @@ mod day1_tests {
         let day = Day1::default();
         assert_ne!(day.part1(EXAMPLE_INPUT), "tmp")
     }
-
 }

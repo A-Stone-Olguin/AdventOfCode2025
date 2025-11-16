@@ -1,18 +1,18 @@
-use advent_of_code_2025::traits::timing_repository::TimingRepository;
-use clap::Parser;
 use advent_of_code_2025::days::day_factory::day_factory;
 use advent_of_code_2025::db::sqlite::connection::Sqlite;
+use advent_of_code_2025::timings::{record_timings::write_timings_to_readme, time_day::time_day};
+use advent_of_code_2025::traits::timing_repository::TimingRepository;
 use advent_of_code_2025::utils::get_input_data::get_input_data;
-use advent_of_code_2025::timings::{time_day::time_day, record_timings::write_timings_to_readme};
+use clap::Parser;
 
 #[derive(Parser)]
 struct Arguments {
     day: u8,
 
-    #[arg(short, long, default_value_t=0)]
+    #[arg(short, long, default_value_t = 0)]
     number_iterations: u32,
 
-    #[arg(short, long, default_value_t=false)]
+    #[arg(short, long, default_value_t = false)]
     record_timings: bool,
 }
 
@@ -32,12 +32,29 @@ fn main() {
     };
 
     if args.number_iterations == 0 {
-        println!("Day {} Part 1 Result: Result: {}", args.day, day.part1(&data));
-        println!("Day {} Part 2 Result: Result: {}", args.day, day.part2(&data));
+        println!(
+            "Day {} Part 1 Result: Result: {}",
+            args.day,
+            day.part1(&data)
+        );
+        println!(
+            "Day {} Part 2 Result: Result: {}",
+            args.day,
+            day.part2(&data)
+        );
     } else {
-        match time_day(args.number_iterations, args.day, &data, &day, &mut timing_repository) {
+        match time_day(
+            args.number_iterations,
+            args.day,
+            &data,
+            &day,
+            &mut timing_repository,
+        ) {
             Ok(_) => println!("Successfully recorded timings for day {}", args.day),
-            Err(e) => panic!("Could not record timings for day {}. Error: {}", args.day, e),
+            Err(e) => panic!(
+                "Could not record timings for day {}. Error: {}",
+                args.day, e
+            ),
         }
     }
 
