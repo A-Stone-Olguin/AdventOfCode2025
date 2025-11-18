@@ -13,7 +13,7 @@ impl Grid {
     }
 
     pub fn left(&self, (x, y): (usize, usize)) -> Option<(usize, usize)> {
-        match x <= 0 {
+        match x == 0 {
             true => None,
             false => Some((x - 1, y)),
         }
@@ -34,7 +34,7 @@ impl Grid {
     }
 
     pub fn up(&self, (x, y): (usize, usize)) -> Option<(usize, usize)> {
-        match y <= 0 {
+        match y == 0 {
             true => None,
             false => Some((x, y - 1)),
         }

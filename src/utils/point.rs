@@ -16,7 +16,7 @@ impl<'a> Point<'a> {
         }
     }
 
-    pub fn left(&self) -> Option<Point<'_>> {
+    pub fn left(&self) -> Option<Point<'a>> {
         match self.x == 0 {
             true => None,
             false => Some(Point {
@@ -27,7 +27,7 @@ impl<'a> Point<'a> {
         }
     }
 
-    pub fn right(&self) -> Option<Point<'_>> {
+    pub fn right(&self) -> Option<Point<'a>> {
         match self.x >= self.grid.dim().0 - 1 {
             true => None,
             false => Some(Point {
@@ -38,7 +38,7 @@ impl<'a> Point<'a> {
         }
     }
 
-    pub fn down(&self) -> Option<Point<'_>> {
+    pub fn down(&self) -> Option<Point<'a>> {
         match self.y >= self.grid.dim().1 - 1 {
             true => None,
             false => Some(Point {
@@ -49,7 +49,7 @@ impl<'a> Point<'a> {
         }
     }
 
-    pub fn up(&self) -> Option<Point<'_>> {
+    pub fn up(&self) -> Option<Point<'a>> {
         match self.y == 0 {
             true => None,
             false => Some(Point {
@@ -80,13 +80,11 @@ impl<'a> Point<'a> {
         let map: Vec<Option<&char>> = directive_grid
             .iter()
             .map(|directives| {
-                directives
-                    .iter()
-                    .fold(Some(self.clone()), |acc, directive| {
-                        acc.and_then(|p| {
-                            directive(&p).map(|next| Point::new(self.grid, next.x, next.y))
-                        })
+                directives.iter().fold(Some(*self), |acc, directive| {
+                    acc.and_then(|p| {
+                        directive(&p).map(|next| Point::new(self.grid, next.x, next.y))
                     })
+                })
             })
             .map(|maybe_point| maybe_point.and_then(|point| self.grid.get((point.x, point.y))))
             .collect();
