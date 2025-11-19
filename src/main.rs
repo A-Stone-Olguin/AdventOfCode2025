@@ -4,20 +4,52 @@ use advent_of_code_2025::timings::{record_timings::write_timings_to_readme, time
 use advent_of_code_2025::traits::timing_repository::TimingRepository;
 use advent_of_code_2025::utils::get_input_data::get_input_data;
 use clap::Parser;
+use dialoguer::theme::ColorfulTheme;
+use dialoguer::{Input, Select};
+
+#[derive(clap::ValueEnum, Clone)]
+enum ValidYear {
+    TwentyFive,
+    TwentyFour,
+}
 
 #[derive(Parser)]
 struct Arguments {
     day: u8,
 
-    #[arg(short, long, default_value_t = 0)]
-    number_iterations: u32,
+    #[arg(short, long, value_enum)]
+    year: Option<ValidYear>,
+
+    #[arg(short, long)]
+    number_iterations: Option<u32>,
 
     #[arg(short, long, default_value_t = false)]
     record_timings: bool,
 }
 
 fn main() {
-    let args = Arguments::parse();
+    let mut args = Arguments::parse();
+
+    if args.year.is_none() {
+        let options = [ValidYear::TwentyFive, ValidYear::TwentyFour];
+        let idx = Select::new()
+            .with_prompt("Choose a year")
+            .items(["2025", "2024"])
+            .default(0)
+            .interact()
+            .unwrap();
+        args.year = Some(options[idx].clone());
+    }
+
+    if args.number_iterations.is_none() {
+        let num_iters = Input::with_theme(&ColorfulTheme::default())
+            .with_prompt("Do you want to time a number of iterations? Enter '0' for no")
+            .default(0)
+            .allow_empty(true)
+            .interact()
+            .unwrap();
+        args.number_iterations = Some(num_iters)
+    }
 
     let day = day_factory(args.day);
 
@@ -31,7 +63,9 @@ fn main() {
         Err(e) => panic!("Could not start database. Error: {e}"),
     };
 
-    if args.number_iterations == 0 {
+    let num_iters = args.number_iterations.unwrap_or_default();
+
+    if num_iters == 0 {
         println!(
             "Day {} Part 1 Result: Result: {}",
             args.day,
@@ -44,7 +78,7 @@ fn main() {
         );
     } else {
         match time_day(
-            args.number_iterations,
+            num_iters,
             args.day,
             &data,
             day.as_ref(),
