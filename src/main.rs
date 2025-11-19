@@ -1,17 +1,12 @@
-use advent_of_code_2025::days::day_factory::day_factory;
 use advent_of_code_2025::db::sqlite::connection::Sqlite;
 use advent_of_code_2025::timings::{record_timings::write_timings_to_readme, time_day::time_day};
 use advent_of_code_2025::traits::timing_repository::TimingRepository;
 use advent_of_code_2025::utils::get_input_data::get_input_data;
+use advent_of_code_2025::years::year::ValidYear;
+use advent_of_code_2025::years::year_factory::year_factory;
 use clap::Parser;
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::{Input, Select};
-
-#[derive(clap::ValueEnum, Clone)]
-enum ValidYear {
-    TwentyFive,
-    TwentyFour,
-}
 
 #[derive(Parser)]
 struct Arguments {
@@ -28,30 +23,34 @@ struct Arguments {
 }
 
 fn main() {
-    let mut args = Arguments::parse();
+    let args = Arguments::parse();
 
-    if args.year.is_none() {
-        let options = [ValidYear::TwentyFive, ValidYear::TwentyFour];
-        let idx = Select::new()
-            .with_prompt("Choose a year")
-            .items(["2025", "2024"])
-            .default(0)
-            .interact()
-            .unwrap();
-        args.year = Some(options[idx].clone());
-    }
+    let year = match args.year {
+        Some(year) => year,
+        None => {
+            let options = [ValidYear::TwentyFive, ValidYear::TwentyFour];
+            let idx = Select::new()
+                .with_prompt("Choose a year")
+                .items(["2025", "2024"])
+                .default(0)
+                .interact()
+                .unwrap();
+            options[idx].clone()
+        }
+    };
 
-    if args.number_iterations.is_none() {
-        let num_iters = Input::with_theme(&ColorfulTheme::default())
+    let num_iters = match args.number_iterations {
+        Some(iters) => iters,
+        None => Input::with_theme(&ColorfulTheme::default())
             .with_prompt("Do you want to time a number of iterations? Enter '0' for no")
             .default(0)
             .allow_empty(true)
             .interact()
-            .unwrap();
-        args.number_iterations = Some(num_iters)
-    }
+            .unwrap(),
+    };
 
-    let day = day_factory(args.day);
+    let year = year_factory(year);
+    let day = year.day_factory(args.day);
 
     let data = match get_input_data(args.day) {
         Ok(data) => data,
@@ -62,8 +61,6 @@ fn main() {
         Ok(repo) => Box::new(repo),
         Err(e) => panic!("Could not start database. Error: {e}"),
     };
-
-    let num_iters = args.number_iterations.unwrap_or_default();
 
     if num_iters == 0 {
         println!(
