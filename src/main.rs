@@ -7,6 +7,7 @@ use advent_of_code_2025::years::year_factory::year_factory;
 use clap::Parser;
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::{Input, Select};
+use strum::IntoEnumIterator;
 
 #[derive(Parser)]
 struct Arguments {
@@ -28,14 +29,15 @@ fn main() {
     let year = match args.year {
         Some(year) => year,
         None => {
-            let options = [ValidYear::TwentyFive, ValidYear::TwentyFour];
+            let options: Vec<u32> = ValidYear::iter().map(|x| x.into()).collect();
+
             let idx = Select::new()
                 .with_prompt("Choose a year")
-                .items(["2025", "2024"])
+                .items(&options)
                 .default(0)
                 .interact()
                 .unwrap();
-            options[idx].clone()
+            options[idx].into()
         }
     };
 
