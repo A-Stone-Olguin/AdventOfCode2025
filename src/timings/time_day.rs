@@ -7,7 +7,7 @@ pub fn time_day<E>(
     number_iterations: u32,
     day_number: u8,
     data: &str,
-    day: &Box<dyn Day>,
+    day: &dyn Day,
     timing_repository: &mut Box<dyn TimingRepository<E>>,
 ) -> Result<(), E> {
     let timings_part1 = record_timings(number_iterations, data, |input| day.part1(input));

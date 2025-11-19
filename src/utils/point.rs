@@ -80,10 +80,8 @@ impl<'a> Point<'a> {
         let map: Vec<Option<&char>> = directive_grid
             .iter()
             .map(|directives| {
-                directives.iter().fold(Some(*self), |acc, directive| {
-                    acc.and_then(|p| {
-                        directive(&p).map(|next| Point::new(self.grid, next.x, next.y))
-                    })
+                directives.iter().try_fold(*self, |acc, directive| {
+                    directive(&acc).map(|next| Point::new(self.grid, next.x, next.y))
                 })
             })
             .map(|maybe_point| maybe_point.and_then(|point| self.grid.get((point.x, point.y))))

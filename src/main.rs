@@ -47,7 +47,7 @@ fn main() {
             args.number_iterations,
             args.day,
             &data,
-            &day,
+            day.as_ref(),
             &mut timing_repository,
         ) {
             Ok(_) => println!("Successfully recorded timings for day {}", args.day),
