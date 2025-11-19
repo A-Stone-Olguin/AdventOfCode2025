@@ -1,6 +1,6 @@
 use ndarray::Array2;
 
-#[derive(PartialEq, Eq, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Debug, Clone, Copy, Hash)]
 pub struct Point<'a> {
     grid: &'a Array2<char>,
     x: usize,

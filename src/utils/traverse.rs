@@ -1,5 +1,8 @@
+use std::collections::HashMap;
+
 use crate::utils::point::Point;
 
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Direction {
     Up,
     Down,
@@ -10,6 +13,7 @@ pub enum Direction {
 pub struct Traverse<'a> {
     current_direction: Direction,
     current_point: Option<Point<'a>>,
+    previous_locations: HashMap<Point<'a>, Direction>,
 }
 
 impl<'a> Traverse<'a> {
@@ -17,6 +21,7 @@ impl<'a> Traverse<'a> {
         Traverse {
             current_direction: direction,
             current_point: Some(init_point),
+            previous_locations: HashMap::from([(init_point, direction)]),
         }
     }
 
@@ -51,6 +56,13 @@ impl<'a> Traverse<'a> {
     pub fn turn_left(&mut self) {
         self.turn_around();
         self.turn_right();
+    }
+
+    pub fn has_visited(&self, point: &Point<'a>, direction: Direction) -> bool {
+        match self.previous_locations.get(point) {
+            Some(prev_direction) => *prev_direction == direction,
+            None => false,
+        }
     }
 }
 
