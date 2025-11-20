@@ -1,0 +1,1 @@
+DELETE FROM days WHERE year = 2025;

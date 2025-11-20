@@ -1,0 +1,4 @@
+INSERT INTO years (year) VALUES
+  (2025),
+  (2024)
+ON CONFLICT(year) DO NOTHING;

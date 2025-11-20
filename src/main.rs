@@ -26,7 +26,7 @@ struct Arguments {
 fn main() {
     let args = Arguments::parse();
 
-    let year = match args.year {
+    let valid_year = match args.year {
         Some(year) => year,
         None => {
             let options: Vec<u32> = ValidYear::iter().map(|x| x.into()).collect();
@@ -51,7 +51,7 @@ fn main() {
             .unwrap(),
     };
 
-    let year = year_factory(year);
+    let year = year_factory(valid_year.clone());
     let day = year.day_factory(args.day);
 
     let data = match get_input_data(args.day) {
@@ -81,6 +81,7 @@ fn main() {
             args.day,
             &data,
             day.as_ref(),
+            valid_year.into(),
             &mut timing_repository,
         ) {
             Ok(_) => println!("Successfully recorded timings for day {}", args.day),
