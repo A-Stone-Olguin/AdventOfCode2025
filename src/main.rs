@@ -54,7 +54,7 @@ fn main() {
     let year = year_factory(valid_year.clone());
     let day = year.day_factory(args.day);
 
-    let data = match get_input_data(args.day) {
+    let data = match get_input_data(valid_year.clone().into(), args.day) {
         Ok(data) => data,
         Err(e) => panic!("{e}"),
     };
