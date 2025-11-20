@@ -19,4 +19,6 @@ To have this automatically update the table before commit, add the gitHooks fold
 <!-- START_TIMINGS_TABLE -->
 | Day | Part | Min Time (ms) | Median Time (ms) | Max Time (ms) | Number Iterations |
 | --- | ---- | ------------- | ---------------- | ------------- | ----------------- |
+| 1 | 1 | 6 | 10 | 6 | 10 |
+| 1 | 1 | 7 | 8 | 7 | 10 |
 <!-- END_TIMINGS_TABLE -->
