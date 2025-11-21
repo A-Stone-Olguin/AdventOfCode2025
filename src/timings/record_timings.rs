@@ -20,13 +20,12 @@ where
     timings
 }
 
-fn convert_micros_to_millis<T>(microsecond: T) -> f64 
- where
-    T: Into<f64>
+fn convert_micros_to_millis<T>(microsecond: T) -> f64
+where
+    T: Into<f64>,
 {
     (microsecond.into()) / 1000.0
 }
-
 
 fn construct_table_string(timings: Vec<TimingResult>) -> Result<String, std::fmt::Error> {
     let mut md_table = String::new();

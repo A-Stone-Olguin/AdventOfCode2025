@@ -5,6 +5,7 @@ echo "Running pre-commit hook"
 if [[ -n $(cargo fmt --check) ]]; then
   echo "Failed formatting"
   echo "Please run 'cargo fmt' before committing"
+  exit 1
 fi
 
 
