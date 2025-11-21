@@ -12,13 +12,21 @@ where
         let start = SystemTime::now();
         timed_function(data);
         let duration = match start.elapsed() {
-            Ok(elapsed) => elapsed.as_millis() as i64,
+            Ok(elapsed) => i64::try_from(elapsed.as_micros()).unwrap_or(i64::MAX),
             Err(_) => 0,
         };
         timings.push(duration);
     }
     timings
 }
+
+fn convert_micros_to_millis<T>(microsecond: T) -> f64 
+ where
+    T: Into<f64>
+{
+    (microsecond.into()) / 1000.0
+}
+
 
 fn construct_table_string(timings: Vec<TimingResult>) -> Result<String, std::fmt::Error> {
     let mut md_table = String::new();
@@ -38,9 +46,9 @@ fn construct_table_string(timings: Vec<TimingResult>) -> Result<String, std::fmt
             "| {} | {} | {} | {} | {} | {} |",
             timing.day,
             timing.part,
-            timing.min_time_ms,
-            timing.median_time_ms,
-            timing.max_time_ms,
+            convert_micros_to_millis(timing.min_time_micro as f64),
+            convert_micros_to_millis(timing.median_time_micro),
+            convert_micros_to_millis(timing.max_time_micro as f64),
             timing.number_iterations,
         )?;
     }

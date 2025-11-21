@@ -45,7 +45,7 @@ impl TimingRepository<rusqlite::Error> for Sqlite {
             None => return Ok(0),
         };
 
-        let sql = format!("INSERT INTO timings (day_id, time_ms) VALUES {args}");
+        let sql = format!("INSERT INTO timings (day_id, time_micro_seconds) VALUES {args}");
         let params = std::iter::once(&day_id).chain(timings_ms.iter());
 
         self.conn.execute(&sql, rusqlite::params_from_iter(params))
@@ -65,9 +65,9 @@ impl TimingRepository<rusqlite::Error> for Sqlite {
                 y.year,
                 d.day,
                 d.part,
-                min(t.time_ms),
-                median(t.time_ms),
-                max(t.time_ms),
+                min(t.time_micro_seconds),
+                median(t.time_micro_seconds),
+                max(t.time_micro_seconds),
                 count(t.id)
             FROM years y
             JOIN days d on d.year = y.year
@@ -85,9 +85,9 @@ impl TimingRepository<rusqlite::Error> for Sqlite {
                 year: row.get(0)?,
                 day: row.get(1)?,
                 part: row.get(2)?,
-                min_time_ms: row.get(3).unwrap_or_default(),
-                median_time_ms: row.get(4).unwrap_or_default(),
-                max_time_ms: row.get(5).unwrap_or_default(),
+                min_time_micro: row.get(3).unwrap_or_default(),
+                median_time_micro: row.get(4).unwrap_or_default(),
+                max_time_micro: row.get(5).unwrap_or_default(),
                 number_iterations: row.get(6).unwrap_or_default(),
             };
             timing_results.push(result);
