@@ -1,9 +1,9 @@
-use advent_of_code_2025::db::sqlite::connection::Sqlite;
-use advent_of_code_2025::timings::{record_timings::write_timings_to_readme, time_day::time_day};
-use advent_of_code_2025::traits::timing_repository::TimingRepository;
-use advent_of_code_2025::utils::get_input_data::get_input_data;
-use advent_of_code_2025::years::year::ValidYear;
-use advent_of_code_2025::years::year_factory::year_factory;
+use advent_of_code_rust::db::sqlite::connection::Sqlite;
+use advent_of_code_rust::timings::{record_timings::write_timings_to_readme, time_day::time_day};
+use advent_of_code_rust::traits::timing_repository::TimingRepository;
+use advent_of_code_rust::utils::get_input_data::get_input_data;
+use advent_of_code_rust::years::year::ValidYear;
+use advent_of_code_rust::years::year_factory::year_factory;
 use clap::Parser;
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::{Input, Select};
