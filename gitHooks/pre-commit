@@ -8,7 +8,7 @@ if [[ -n $(cargo fmt --check) ]]; then
 fi
 
 
-cargo run 1 -r -y twenty-five -n 0
-git add README.md
+# cargo run 1 -r -y twenty-five -n 0
+# git add README.md
 
 echo "Finished running pre-commit hook"
