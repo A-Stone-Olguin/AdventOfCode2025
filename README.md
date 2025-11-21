@@ -17,8 +17,17 @@ To have this automatically update the table before commit, add the gitHooks fold
 `git config core.hooksPath gitHooks`
 
 <!-- START_TIMINGS_TABLE -->
+### 2024
 | Day | Part | Min Time (ms) | Median Time (ms) | Max Time (ms) | Number Iterations |
 | --- | ---- | ------------- | ---------------- | ------------- | ----------------- |
-| 1 | 1 | 0 | 0 | 0 | 1000 |
+| 1 | 1 | 0 | 0 | 1 | 1000 |
 | 1 | 2 | 0 | 0 | 0 | 1000 |
+
+### 2025
+| Day | Part | Min Time (ms) | Median Time (ms) | Max Time (ms) | Number Iterations |
+| --- | ---- | ------------- | ---------------- | ------------- | ----------------- |
+| 1 | 1 | 0 | 0 | 0 | 100 |
+| 1 | 2 | 0 | 0 | 0 | 100 |
+| 2 | 1 | 0 | 0 | 0 | 10 |
+| 2 | 2 | 0 | 0 | 0 | 10 |
 <!-- END_TIMINGS_TABLE -->

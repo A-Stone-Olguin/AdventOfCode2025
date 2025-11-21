@@ -62,16 +62,18 @@ impl TimingRepository<rusqlite::Error> for Sqlite {
         let mut select_timings_stmt = self.conn.prepare_cached(
             r#"
             SELECT
+                y.year,
                 d.day,
                 d.part,
                 min(t.time_ms),
                 median(t.time_ms),
                 max(t.time_ms),
                 count(t.id)
-            FROM days d
+            FROM years y
+            JOIN days d on d.year = y.year
             JOIN timings t ON d.id = t.day_id
             GROUP BY t.day_id
-            ORDER BY d.day;
+            ORDER BY y.year, d.day;
             "#,
         )?;
 
@@ -80,12 +82,13 @@ impl TimingRepository<rusqlite::Error> for Sqlite {
         let mut timing_results: Vec<TimingResult> = vec![];
         while let Some(row) = rows.next()? {
             let result = TimingResult {
-                day: row.get(0)?,
-                part: row.get(1)?,
-                min_time_ms: row.get(2).unwrap_or_default(),
-                median_time_ms: row.get(3).unwrap_or_default(),
-                max_time_ms: row.get(2).unwrap_or_default(),
-                number_iterations: row.get(5).unwrap_or_default(),
+                year: row.get(0)?,
+                day: row.get(1)?,
+                part: row.get(2)?,
+                min_time_ms: row.get(3).unwrap_or_default(),
+                median_time_ms: row.get(4).unwrap_or_default(),
+                max_time_ms: row.get(5).unwrap_or_default(),
+                number_iterations: row.get(6).unwrap_or_default(),
             };
             timing_results.push(result);
         }

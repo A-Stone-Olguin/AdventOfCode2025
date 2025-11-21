@@ -49,7 +49,7 @@ fn get_counted_lists(input: &str) -> (Vec<u32>, HashMap<u32, u32>) {
 
         let row_val: u32 = row[1].parse().unwrap_or_default();
         match map.get(&row_val) {
-            Some(count) => map.insert(row_val, count+1),
+            Some(count) => map.insert(row_val, count + 1),
             None => map.insert(row_val, 1),
         };
     }
@@ -63,7 +63,8 @@ fn compute_total_distance(paired_vec: Vec<(u32, u32)>) -> u32 {
 }
 
 fn compute_similarity_score((vec, map): (Vec<u32>, HashMap<u32, u32>)) -> u32 {
-    vec.iter().fold(0, |acc, val| acc + val * map.get(val).unwrap_or(&0))
+    vec.iter()
+        .fold(0, |acc, val| acc + val * map.get(val).unwrap_or(&0))
 }
 
 impl Day for Day1 {

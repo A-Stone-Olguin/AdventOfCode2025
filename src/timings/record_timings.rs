@@ -68,7 +68,25 @@ fn write_table_to_readme(markdown_table: &str) -> Result<(), std::io::Error> {
     fs::write(readme_path, new_content)
 }
 
+fn construct_readme_table_for_years(
+    mut timings: Vec<TimingResult>,
+) -> Result<String, std::io::Error> {
+    match timings.len() {
+        0 => Ok(String::new()),
+        _ => {
+            let first_year = timings.first().unwrap_or(&TimingResult::default()).year;
+            let partition_point = timings.partition_point(|x| x.year == first_year);
+            let rest = timings.split_off(partition_point);
+            Ok(format!(
+                "### {first_year}\n{}\n{}",
+                construct_table_string(timings).map_err(std::io::Error::other)?,
+                construct_readme_table_for_years(rest)?
+            ))
+        }
+    }
+}
+
 pub fn write_timings_to_readme(timings: Vec<TimingResult>) -> Result<(), std::io::Error> {
-    let markdown_table = construct_table_string(timings).map_err(std::io::Error::other)?;
+    let markdown_table = construct_readme_table_for_years(timings)?;
     write_table_to_readme(&markdown_table)
 }
