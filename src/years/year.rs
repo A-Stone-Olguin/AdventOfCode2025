@@ -6,6 +6,13 @@ pub enum ValidYear {
     TwentyFour,
 }
 
+pub fn valid_days(valid_year: ValidYear) -> u8 {
+    match valid_year {
+        ValidYear::TwentyFive => 12,
+        ValidYear::TwentyFour => 25,
+    }
+}
+
 impl From<u32> for ValidYear {
     fn from(value: u32) -> Self {
         match value {

@@ -22,4 +22,10 @@ To have this automatically update the table before commit, add the gitHooks fold
 | --- | ---- | ------------- | ---------------- | ------------- | ----------------- |
 | 1 | 1 | 0.432 | 0.8835 | 1.481 | 100 |
 | 1 | 2 | 0.464 | 0.479 | 0.525 | 100 |
+
+### 2025
+| Day | Part | Min Time (ms) | Median Time (ms) | Max Time (ms) | Number Iterations |
+| --- | ---- | ------------- | ---------------- | ------------- | ----------------- |
+| 1 | 1 | 0 | 0 | 0.001 | 10 |
+| 1 | 2 | 0 | 0 | 0 | 10 |
 <!-- END_TIMINGS_TABLE -->
