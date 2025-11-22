@@ -3,7 +3,8 @@ name: Rust
 on:
   workflow_dispatch:
 
-permissions: write
+permissions: 
+  content: write
 
 env:
   CARGO_TERM_COLOR: always
