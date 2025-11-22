@@ -68,7 +68,7 @@ pub fn parse_arguments() -> ParsedArguments {
     };
 
     let day = if skip_day_year_prompt {
-        1
+        0
     } else {
         let max_day = valid_days(valid_year.clone());
         match args.day {

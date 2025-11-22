@@ -10,12 +10,46 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  report:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Restore Cargo Cache
+      uses: actions/cache@v4.3.0
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key:  ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
+
+    - uses: actions/checkout@v4
+    - name: Build
+      run: cargo build --verbose --release
+    - name: Upload release binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: advent-of-code-release
+        path: target/release/advent_of_code_rust
+        if-no-files-found: error
+
+
+  record:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Download release binary
+        uses: actions/download-artifact@v4
+        with:
+          name: advent-of-code-release
+          path: ./dist
       - name: Write to README
-        run: cargo run --release 1 -r
+        run: |
+          chmod +x ./dist/advent_of_code_rust
+          ./dist/advent_of_code_rust -r
       - name: Commit report
         run: |
           git config --global user.name 'Stone Olguin'

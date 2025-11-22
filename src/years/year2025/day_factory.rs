@@ -20,4 +20,10 @@ impl Year for Year2025 {
             12 => Day12
         )
     }
+
+    fn get_all_days(&self) -> Vec<Box<dyn Day>> {
+        list_days!(
+            Day1, Day2, Day3, Day4, Day5, Day6, Day7, Day8, Day9, Day10, Day11, Day12
+        )
+    }
 }
