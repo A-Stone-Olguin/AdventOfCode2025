@@ -1,0 +1,23 @@
+name: Rust
+
+on:
+  workflow_dispatch:
+
+permissions: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Write to README
+        run: cargo run --release 1 -r
+      - name: Commit report
+        run: |
+          git config --global user.name 'Stone Olguin'
+          git config --global user.email 'olguinstone@gmail.com'
+          git commit -am "Automated report of timings"
+          git push
