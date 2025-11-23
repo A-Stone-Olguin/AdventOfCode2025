@@ -107,7 +107,7 @@ jobs:
         run: |
           mkdir -p input
           echo "${{ secrets.AOC_INPUT_ARCHIVE }}" | base64 -d > /tmp/aoc_inputs.tar.gz
-          tar -xzf /tmp/aoc_inputs.tar.gz -C input
+          tar -xzf /tmp/aoc_inputs.tar.gz -C .
 
 
       - name: Time everything
