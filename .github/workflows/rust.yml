@@ -104,7 +104,7 @@ jobs:
         run: chmod +x "${{ env.RECORD_BINARY_DIR }}/${{ env.BINARY_NAME }}"
 
       - name: Time everything
-        run: ${{ env.RECORD_BINARY_DIR }}/${{ env.BINARY_NAME }} -a "${{ env.TIMING_ARGUMENT }}"
+        run: ${{ env.RECORD_BINARY_DIR }}/${{ env.BINARY_NAME }} -a -n "${{ env.TIMING_ARGUMENT }}"
 
       - name: Write to README
         run: ${{ env.RECORD_BINARY_DIR }}/${{ env.BINARY_NAME }} -r
