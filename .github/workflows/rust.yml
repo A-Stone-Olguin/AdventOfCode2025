@@ -103,6 +103,13 @@ jobs:
       - name: Make report binary executable
         run: chmod +x "${{ env.RECORD_BINARY_DIR }}/${{ env.BINARY_NAME }}"
 
+      - name: Restore AoC inputs
+        run: |
+          mkdir -p input
+          echo "${{ secrets.AOC_INPUT_ARCHIVE }}" | base64 -d > /tmp/aoc_inputs.tar.gz
+          tar -xzf /tmp/aoc_inputs.tar.gz -C input
+
+
       - name: Time everything
         run: ${{ env.RECORD_BINARY_DIR }}/${{ env.BINARY_NAME }} -a -n "${{ env.TIMING_ARGUMENT }}"
 

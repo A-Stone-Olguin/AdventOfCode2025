@@ -31,3 +31,6 @@ target
 
 # Added by cargo
 /target
+
+# Secret-encoded base64 files
+*.b64
