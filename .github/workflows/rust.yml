@@ -2,57 +2,119 @@ name: Rust
 
 on:
   workflow_dispatch:
+    inputs:
+      time_argument:
+        description: "Number of iterations to run for the timing"
+        required: true
+        default: "100"
 
-permissions: 
+permissions:
   contents: write
 
 env:
   CARGO_TERM_COLOR: always
+  ARTIFACT_NAME: advent-of-code-release
+  BINARY_NAME: advent_of_code_rust
 
 jobs:
   build:
+    if: github.actor == github.repository_owner
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Restore Cargo Cache
-      uses: actions/cache@v4.3.0
-      with:
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-          target
-        key:  ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-cargo-
+      - name: Restore Cargo cache
+        uses: actions/cache@v4.3.0
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
 
-    - uses: actions/checkout@v4
-    - name: Build
-      run: cargo build --verbose --release
-    - name: Upload release binary
-      uses: actions/upload-artifact@v4
-      with:
-        name: advent-of-code-release
-        path: target/release/advent_of_code_rust
-        if-no-files-found: error
+      - name: Build release binary
+        run: cargo build --verbose --release
 
+      - name: Upload release binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: target/release/${{ env.BINARY_NAME }}
+          if-no-files-found: error
+
+      - name: Keep only 5 artifacts
+        uses: actions/github-script@v7
+        env:
+          ARTIFACT_NAME: ${{ env.ARTIFACT_NAME }}
+          MAX_ARTIFACTS: "5"
+        with:
+          script: |
+            const max = parseInt(process.env.MAX_ARTIFACTS, 10);
+            const artifactName = process.env.ARTIFACT_NAME;
+            const artifacts = await github.paginate(
+              github.rest.actions.listArtifactsForRepo,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                per_page: 100,
+              },
+            );
+            const matching = artifacts
+              .filter((artifact) => artifact.name === artifactName && !artifact.expired)
+              .sort(
+                (a, b) =>
+                  new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+              );
+            const toDelete = matching.slice(max);
+            if (toDelete.length === 0) {
+              core.info(`No ${artifactName} artifacts need pruning.`);
+            }
+            for (const artifact of toDelete) {
+              core.info(
+                `Deleting artifact ${artifact.id} (${artifact.name}) created at ${artifact.created_at}`,
+              );
+              await github.rest.actions.deleteArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: artifact.id,
+              });
+            }
 
   record:
     needs: build
+    if: github.actor == github.repository_owner
     runs-on: ubuntu-latest
+    env:
+      RECORD_BINARY: ./dist/${{ env.BINARY_NAME }}
+      TIMING_ARGUMENT: ${{ inputs.time_argument }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Download release binary
         uses: actions/download-artifact@v4
         with:
-          name: advent-of-code-release
-          path: ./dist
+          name: ${{ env.ARTIFACT_NAME }}
+          path: dist
+
+      - name: Make report binary executable
+        run: chmod +x "${{ env.RECORD_BINARY }}"
+
+      - name: Time everything
+        run: ${{ env.RECORD_BINARY }} -a "${{ env.TIMING_ARGUMENT }}"
+
       - name: Write to README
-        run: |
-          chmod +x ./dist/advent_of_code_rust
-          ./dist/advent_of_code_rust -r
+        run: ${{ env.RECORD_BINARY }} -r
+
       - name: Commit report
+        env:
+          GIT_USER: ${{ github.actor }}
+          GIT_EMAIL: ${{ format('{0}@users.noreply.github.com', github.actor) }}
         run: |
-          git config --global user.name 'Stone Olguin'
-          git config --global user.email 'olguinstone@gmail.com'
+          git config --global user.name "$GIT_USER"
+          git config --global user.email "$GIT_EMAIL"
           git commit -am "Automated report of timings"
           git push
