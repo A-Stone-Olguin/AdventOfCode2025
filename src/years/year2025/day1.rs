@@ -4,12 +4,12 @@ use crate::traits::day::Day;
 pub struct Day1;
 
 impl Day for Day1 {
-    fn part1(&self, input: &str) -> String {
-        format!("Unimplemented part1. Input: {}", input)
+    fn part1(&self, _input: &str) -> String {
+        format!("Unimplemented part1.")
     }
 
-    fn part2(&self, input: &str) -> String {
-        format!("Unimplemented part2. Input: {}", input)
+    fn part2(&self, _input: &str) -> String {
+        format!("Unimplemented part2.")
     }
 }
 
