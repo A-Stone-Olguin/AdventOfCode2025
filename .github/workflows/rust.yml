@@ -88,7 +88,7 @@ jobs:
     if: github.actor == github.repository_owner
     runs-on: ubuntu-latest
     env:
-      RECORD_BINARY: ./dist/${{ env.BINARY_NAME }}
+      RECORD_BINARY_DIR: ./dist
       TIMING_ARGUMENT: ${{ inputs.time_argument }}
     steps:
       - name: Checkout
@@ -101,13 +101,13 @@ jobs:
           path: dist
 
       - name: Make report binary executable
-        run: chmod +x "${{ env.RECORD_BINARY }}"
+        run: chmod +x "${{ env.RECORD_BINARY_DIR }}/${{ env.BINARY_NAME }}"
 
       - name: Time everything
-        run: ${{ env.RECORD_BINARY }} -a "${{ env.TIMING_ARGUMENT }}"
+        run: ${{ env.RECORD_BINARY_DIR }}/${{ env.BINARY_NAME }} -a "${{ env.TIMING_ARGUMENT }}"
 
       - name: Write to README
-        run: ${{ env.RECORD_BINARY }} -r
+        run: ${{ env.RECORD_BINARY_DIR }}/${{ env.BINARY_NAME }} -r
 
       - name: Commit report
         env:
