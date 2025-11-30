@@ -31,25 +31,23 @@ fn get_sequence(input: &str) -> Vec<Vec<i32>> {
         .collect()
 }
 
-fn is_safe(sequence: &Vec<i32>) -> bool {
-    let is_monotone_increasing = sequence.iter().is_sorted_by(safe_constraints());
-    let is_monotone_decreasing = sequence.iter().rev().is_sorted_by(safe_constraints());
-
-    return is_monotone_increasing || is_monotone_decreasing;
+fn is_safe(sequence: &[i32]) -> bool {
+    sequence.iter().is_sorted_by(safe_constraints())
+        || sequence.iter().rev().is_sorted_by(safe_constraints())
 }
 
-fn is_safe_increasing(sequence: &Vec<i32>) -> bool {
+fn is_safe_increasing(sequence: &[i32]) -> bool {
     sequence.iter().is_sorted_by(safe_constraints())
 }
 
-fn is_safe_v2(sequence: &Vec<i32>) -> bool {
-    let is_increasing = sequence
+fn is_safe_with_dampening(sequence: &[i32]) -> bool {
+    let has_failure = sequence
         .windows(2)
         .enumerate()
         .find(|(_, vals)| !safe_constraints_v2(vals[0], vals[1]))
         .map(|(i, _)| i + 1);
 
-    match is_increasing {
+    match has_failure {
         Some(i) => {
             // We don't know if the first or second element was the one that caused the issue. We can try both
             is_safe_increasing(&[&sequence[..i], &sequence[i + 1..]].concat())
@@ -59,13 +57,13 @@ fn is_safe_v2(sequence: &Vec<i32>) -> bool {
     }
 }
 
-fn is_safe_wrapper(sequence: &Vec<i32>) -> bool {
-    match is_safe_v2(sequence) {
+fn is_safe_wrapper(sequence: &[i32]) -> bool {
+    match is_safe_with_dampening(sequence) {
         true => true,
         false => {
-            let mut clone = sequence.clone();
+            let mut clone = sequence.to_owned();
             clone.reverse();
-            is_safe_v2(&clone)
+            is_safe_with_dampening(&clone)
         }
     }
 }

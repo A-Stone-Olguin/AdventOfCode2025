@@ -5,10 +5,10 @@ pub struct Day16;
 
 impl Day for Day16 {
     fn part1(&self, _input: &str) -> String {
-        format!("Unimplemented part1.")
+        "Unimplemented part1.".to_string()
     }
 
     fn part2(&self, _input: &str) -> String {
-        format!("Unimplemented part2.")
+        "Unimplemented part2.".to_string()
     }
 }
