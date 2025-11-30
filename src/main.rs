@@ -39,7 +39,7 @@ fn main() {
         let year_num: u32 = year_enum.into();
 
         for (i, day) in days.iter().enumerate() {
-            let day_num = i as u8 + 1;
+            let day_num = if args.run_all { i as u8 + 1 } else { args.day };
             run_day(
                 &args,
                 year_num,
