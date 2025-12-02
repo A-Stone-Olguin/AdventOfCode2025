@@ -9,6 +9,7 @@ on:
         default: "100"
 
 permissions:
+  actions: write
   contents: write
 
 env:
