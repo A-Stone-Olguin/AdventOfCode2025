@@ -104,10 +104,12 @@ jobs:
         run: chmod +x "${{ env.RECORD_BINARY_DIR }}/${{ env.BINARY_NAME }}"
 
       - name: Restore AoC inputs
+        env:
+          AOC_INPUTS_KEY: ${{ secrets.AOC_INPUTS_KEY }}
+          AOC_INPUTS_IV: ${{ secrets.AOC_INPUTS_IV }}
         run: |
-          mkdir -p input
-          echo "${{ secrets.AOC_INPUT_ARCHIVE }}" | base64 -d > /tmp/aoc_inputs.tar.gz
-          tar -xzf /tmp/aoc_inputs.tar.gz -C .
+          openssl enc -aes-256-cbc -d -K "$AOC_INPUTS_KEY" -iv "$AOC_INPUTS_IV" -in input/encrypted_inputs_tar -out - \
+            | tar -xz -C .
 
 
       - name: Time everything

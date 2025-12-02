@@ -21,13 +21,10 @@ target
 #.idea/
 
 # No environment
-.env
+*.env
 
 # No IDE files
 .vscode
-
-# No WAL files
-
 
 # Added by cargo
 /target
