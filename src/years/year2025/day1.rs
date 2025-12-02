@@ -18,12 +18,12 @@ fn parse_turns(input: &str) -> Vec<(Turn, i32)> {
     captures
         .iter()
         .map(|capture| {
-            let inserted_value = match capture.get(0).unwrap().get(0).unwrap().as_str() {
+            let inserted_value = match capture.first().unwrap().first().unwrap().as_str() {
                 "L" => Turn::Left,
                 "R" => Turn::Right,
                 _ => panic!("Got invalid value"),
             };
-            let turn_amount: i32 = capture.get(0).unwrap().get(1).unwrap().parse().unwrap();
+            let turn_amount: i32 = capture.first().unwrap().get(1).unwrap().parse().unwrap();
             (inserted_value, turn_amount)
         })
         .collect()
