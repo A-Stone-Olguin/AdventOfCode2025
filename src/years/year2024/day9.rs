@@ -35,12 +35,12 @@ fn move_file_blocks(uncompact: &mut [Option<usize>]) -> &mut [Option<usize>] {
 
     while left < right {
         // Find first available 'None'
-        while let Some(_) = uncompact[left] {
+        while uncompact[left].is_some() {
             left += 1;
         }
 
         // Find first available 'Some'
-        while let None = uncompact[right] {
+        while uncompact[right].is_none() {
             right -= 1;
         }
 
