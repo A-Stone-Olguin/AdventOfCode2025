@@ -16,7 +16,7 @@ fn parse_ranges_ingredients(input: &str) -> (Vec<(u64, u64)>, Vec<u64>) {
     let mut ranges: Vec<(u64, u64)> = vec![];
     let mut ingredients: Vec<u64> = vec![];
     for m in matches {
-        if m.len() == 0 {
+        if m.is_empty() {
             continue;
         } else if m.len() == 1 {
             ingredients.push(m[0].parse().unwrap());
@@ -42,17 +42,17 @@ fn get_fresh_count((ranges, ingredients): &(Vec<(u64, u64)>, Vec<u64>)) -> u32 {
     fresh_count
 }
 
-fn get_cleaned_ranges(ranges: &mut Vec<(u64, u64)>) -> Vec<(u64, u64)> {
+fn get_cleaned_ranges(ranges: &mut [(u64, u64)]) -> Vec<(u64, u64)> {
     ranges.sort_by(|(a1, _), (a2, _)| a1.cmp(a2));
 
     let mut cleaned_up_ranges: Vec<(u64, u64)> = vec![];
 
-    for (_, (lo, hi)) in ranges.iter().enumerate() {
+    for &(lo, hi) in ranges.iter() {
         if cleaned_up_ranges.is_empty() {
-            cleaned_up_ranges.push((*lo, *hi));
+            cleaned_up_ranges.push((lo, hi));
             continue;
         }
-        for (i, (lo2, hi2)) in cleaned_up_ranges.clone().iter().enumerate() {
+        for (i, &(lo2, hi2)) in cleaned_up_ranges.clone().iter().enumerate() {
             // Subsumed
             if lo >= lo2 && hi <= hi2 {
                 break;
@@ -60,25 +60,25 @@ fn get_cleaned_ranges(ranges: &mut Vec<(u64, u64)>) -> Vec<(u64, u64)> {
 
             // Consumed
             if lo <= lo2 && hi >= hi2 {
-                cleaned_up_ranges[i] = (*lo, *hi);
+                cleaned_up_ranges[i] = (lo, hi);
                 break;
             }
 
             // Overlap left
             if lo < lo2 && lo2 <= hi {
-                cleaned_up_ranges[i] = (*lo, *hi2);
+                cleaned_up_ranges[i] = (lo, hi2);
                 break;
             }
 
             // Overlap right
             if hi > hi2 && lo <= hi2 {
-                cleaned_up_ranges[i] = (*lo2, *hi);
+                cleaned_up_ranges[i] = (lo2, hi);
                 break;
             }
 
             // No ranges fit, create new entry
             if i == cleaned_up_ranges.len() - 1 {
-                cleaned_up_ranges.push((*lo, *hi));
+                cleaned_up_ranges.push((lo, hi));
             }
         }
     }
