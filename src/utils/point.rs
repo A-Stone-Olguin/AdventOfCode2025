@@ -3,8 +3,8 @@ use ndarray::Array2;
 #[derive(PartialEq, Eq, Debug, Clone, Copy, Hash)]
 pub struct Point<'a> {
     grid: &'a Array2<char>,
-    x: usize,
-    y: usize,
+    pub x: usize,
+    pub y: usize,
 }
 
 impl<'a> Point<'a> {
@@ -61,7 +61,7 @@ impl<'a> Point<'a> {
     }
 
     pub fn value(&self) -> Option<&char> {
-        self.grid.get((self.x, self.y))
+        self.grid.get((self.y, self.x))
     }
 
     pub fn neighbors(&self) -> Array2<Option<&char>> {
@@ -114,7 +114,7 @@ pub mod point_test {
         assert_eq!(point.value(), Some(&'1'));
 
         let point = Point::new(&grid, 1, 2);
-        assert_eq!(point.value(), Some(&'3'));
+        assert_eq!(point.value(), Some(&'2'));
 
         let invalid_point = Point::new(&grid, 100, 0);
         assert_eq!(invalid_point.value(), None);
